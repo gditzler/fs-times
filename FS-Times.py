@@ -1,13 +1,13 @@
 
 import numpy as np
-import matplotlib.pylab as plt 
+#import matplotlib.pylab as plt 
 import feast
 import utils
 import time 
 from sklearn.feature_selection import chi2 
 from sklearn.linear_model import ElasticNet, Lasso
 from npfs import npfs
-
+import pickle
 
 n_features = 500
 steps = 250
@@ -57,12 +57,12 @@ for n_observations in range(n_begin, n_end, steps):
     lasso_times.append(time.time() - t_start)
     
     # run elastic net
-    mdl = ElasticNet(alpha=1.0, l1_ratio=0.5, fit_intercept=True, normalize=False, 
-                     precompute='auto', max_iter=5000, copy_X=False, tol=0.0001, warm_start=False, 
-                     positive=False, rho=None) 
-    t_start = time.time() 
-    w = mdl.fit(X=data, y=labels)
-    enet_times.append(time.time() - t_start)
+    #mdl = ElasticNet(fit_intercept=True, normalize=False, 
+#                     precompute='auto', max_iter=5000, copy_X=False, tol=0.0001, warm_start=False, 
+#                     positive=False, rho=None) 
+    #t_start = time.time() 
+    #w = mdl.fit(X=data, y=labels)
+    #enet_times.append(time.time() - t_start)
     
     mdl = npfs(fs_method="MIM", n_select=5, n_bootstraps=50, alpha=.01, beta=0.0, parallel=50)
     t_start = time.time()
@@ -73,6 +73,6 @@ for n_observations in range(n_begin, n_end, steps):
 
 data = {"n_observations":n_observations, "mrmr_times":mrmr_times,"jmi_times":jmi_times,"chi2_times":chi2_times,"lasso_times":lasso_times,"enet_times":enet_times,"npfs_times":npfs_times}
 
-import pickle
+
 pickle.dump(data, open("output.pkl","wb"))
 
